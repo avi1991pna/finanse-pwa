@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finanse</title>
+  <meta name="theme-color" content="#1a73e8">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 22px;
+      color: #1a73e8;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .toggle {
+      display: flex;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 2px solid #1a73e8;
+    }
+    .toggle button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: white;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .toggle button.active-wydatek {
+      background: #e53935;
+      color: white;
+    }
+    .toggle button.active-wplyw {
+      background: #43a047;
+      color: white;
+    }
+    .field { margin-bottom: 16px; }
+    label {
+      display: block;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    select, input {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select:focus, input:focus { border-color: #1a73e8; }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .btn:active { background: #1557b0; }
+    .btn:disabled { background: #aaa; }
+    .status {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 14px;
+      min-height: 20px;
+    }
+    .status.ok { color: #43a047; }
+    .status.err { color: #e53935; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>💰 Finanse</h1>
+
+  <div class="toggle">
+    <button id="btnWydatek" class="active-wydatek" onclick="setTyp('wydatek')">Wydatek</button>
+    <button id="btnWplyw" onclick="setTyp('wplyw')">Wpływ</button>
+  </div>
+
+  <div class="field">
+    <label>Kategoria</label>
+    <select id="kategoria">
+      <option value="">Ładowanie kategorii...</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Kwota (zł)</label>
+    <input type="number" id="kwota" placeholder="0.00" step="0.01" min="0">
+  </div>
+
+  <div class="field">
+    <label>Komentarz (opcjonalnie)</label>
+    <input type="text" id="komentarz" placeholder="np. Biedronka">
+  </div>
+
+  <button class="btn" id="btnDodaj" onclick="dodaj()">Dodaj</button>
+  <div class="status" id="status"></div>
+</div>
+
+<script>
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyJr4IyKNl82LpvkhEoUpQNouxhM0J5WRACLkPohPjH8GYkn7zBrzewA93I57nQCebLDQ/exec';
+  let typ = 'wydatek';
+
+  function setTyp(t) {
+    typ = t;
+    document.getElementById('btnWydatek').className = t === 'wydatek' ? 'active-wydatek' : '';
+    document.getElementById('btnWplyw').className = t === 'wplyw' ? 'active-wplyw' : '';
+  }
+
+  async function loadCategories() {
+    try {
+      const res = await fetch(API_URL + '?action=getCategories');
+      const data = await res.json();
+      const sel = document.getElementById('kategoria');
+      sel.innerHTML = '<option value="">Wybierz kategorię...</option>';
+      data.categories.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        sel.appendChild(opt);
+      });
+    } catch {
+      document.getElementById('kategoria').innerHTML = '<option value="">Błąd ładowania</option>';
+    }
+  }
+
+  async function dodaj() {
+    const kwota = document.getElementById('kwota').value;
+    const kategoria = document.getElementById('kategoria').value;
+    const komentarz = document.getElementById('komentarz').value;
+    const status = document.getElementById('status');
+
+    if (!kategoria) { status.classN
