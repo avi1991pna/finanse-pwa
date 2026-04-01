@@ -1,0 +1,15 @@
+{
+  "name": "Finanse",
+  "short_name": "Finanse",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#1a73e8",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/google/material-design-icons/master/png/action/account_balance_wallet/materialicons/48dp/2x/baseline_account_balance_wallet_black_48dp.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    }
+  ]
+}
