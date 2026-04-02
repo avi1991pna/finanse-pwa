@@ -159,7 +159,7 @@
     document.head.appendChild(script);
   }
 
-  async function dodaj() {
+ function dodaj() {
     const kwota = document.getElementById('kwota').value;
     const kategoria = document.getElementById('kategoria').value;
     const komentarz = document.getElementById('komentarz').value;
@@ -171,31 +171,40 @@
     document.getElementById('btnDodaj').disabled = true;
     status.className = 'status'; status.textContent = 'Zapisywanie...';
 
-    try {
-      await fetch(API_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'addTransaction',
-          date: new Date().toLocaleString('pl-PL'),
-          type: typ,
-          category: kategoria,
-          amount: parseFloat(kwota),
-          comment: komentarz
-        })
-      });
-      status.className = 'status ok';
-      status.textContent = '✓ Zapisano!';
-      document.getElementById('kwota').value = '';
-      document.getElementById('komentarz').value = '';
-      document.getElementById('kategoria').value = '';
-    } catch {
+    const callbackName = 'addCallback_' + Date.now();
+    window[callbackName] = function(data) {
+      if (data.status === 'success') {
+        status.className = 'status ok';
+        status.textContent = '✓ Zapisano!';
+        document.getElementById('kwota').value = '';
+        document.getElementById('komentarz').value = '';
+        document.getElementById('kategoria').value = '';
+      } else {
+        status.className = 'status err';
+        status.textContent = 'Błąd zapisu!';
+      }
+      document.getElementById('btnDodaj').disabled = false;
+      delete window[callbackName];
+    };
+
+    const params = new URLSearchParams({
+      action: 'addTransaction',
+      date: new Date().toLocaleString('pl-PL'),
+      type: typ,
+      category: kategoria,
+      amount: parseFloat(kwota),
+      comment: komentarz,
+      callback: callbackName
+    });
+
+    const script = document.createElement('script');
+    script.src = API_URL + '?' + params.toString();
+    script.onerror = function() {
       status.className = 'status err';
       status.textContent = 'Błąd połączenia!';
-    }
-
-    document.getElementById('btnDodaj').disabled = false;
+      document.getElementById('btnDodaj').disabled = false;
+    };
+    document.head.appendChild(script);
   }
 
   loadCategories();
