@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Finanse</title>
+  <meta charset="UTF-8">date: new Date().toLocaleString('pl-PL'),
   <meta name="theme-color" content="#1e1e2e">
   <link rel="manifest" href="manifest.json">
   <style>
@@ -189,7 +187,7 @@
 
     const params = new URLSearchParams({
       action: 'addTransaction',
-      date: new Date().toLocaleDateString('pl-PL'),
+      date: new Date().toLocaleString('pl-PL'),
       type: typ,
       category: kategoria,
       amount: parseFloat(kwota),
