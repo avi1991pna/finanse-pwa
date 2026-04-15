@@ -189,7 +189,7 @@
 
     const params = new URLSearchParams({
       action: 'addTransaction',
-      date: new Date().toLocaleString('pl-PL'),
+      date: new Date().toLocaleDateString('pl-PL'),
       type: typ,
       category: kategoria,
       amount: parseFloat(kwota),
